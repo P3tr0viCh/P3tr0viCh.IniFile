@@ -27,7 +27,7 @@ namespace P3tr0viCh.IniFile
             FileName = fileName;
         }
 
-        public List<string> ReadSections()
+        public void ReadSections(List<string> sections)
         {
             uint MAX_BUFFER = 32767;
 
@@ -37,21 +37,23 @@ namespace P3tr0viCh.IniFile
 
             if (bytesReturned == 0)
             {
-                return null;
+                return;
             }
 
             string local = Marshal.PtrToStringAnsi(lpszReturnBuffer, (int)bytesReturned).ToString();
 
             Marshal.FreeCoTaskMem(lpszReturnBuffer);
 
-            var sections = local.Substring(0, local.Length - 1).Split('\0');
-
-            return new List<string>(sections);
+            sections.AddRange(local.Substring(0, local.Length - 1).Split('\0'));
         }
 
         public bool SectionExists(string section)
         {
-            return ReadSections().Contains(section);
+            var sections = new List<string>();
+            
+            ReadSections(sections);
+
+            return sections.Contains(section);
         }
 
         public void WriteString(string section, string key, string value)
