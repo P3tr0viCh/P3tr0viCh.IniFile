@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Runtime.InteropServices;
 using System.Text;
 
@@ -50,7 +51,7 @@ namespace P3tr0viCh.IniFile
         public bool SectionExists(string section)
         {
             var sections = new List<string>();
-            
+
             ReadSections(sections);
 
             return sections.Contains(section);
@@ -78,6 +79,20 @@ namespace P3tr0viCh.IniFile
         public int ReadInteger(string section, string key, int def = default)
         {
             return GetPrivateProfileInt(section, key, def, FileName);
+        }
+
+        public void WriteFloat(string section, string key, float value)
+        {
+            WriteString(section, key, value.ToString(CultureInfo.InvariantCulture));
+        }
+
+        public float ReadFloat(string section, string key, float def = default)
+        {
+            float.TryParse(
+                ReadString(section, key, def.ToString(CultureInfo.InvariantCulture)),
+                NumberStyles.Float, CultureInfo.InvariantCulture, out float result);
+
+            return result;
         }
 
         public void WriteDateTime(string section, string key, DateTime value)
